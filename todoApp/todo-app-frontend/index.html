@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>To-do App</title>
+</head>
+<style>
+    body {
+        font-family: 'Courier New';
+    }
+    .menu-list-item{
+        display: flex;
+        justify-content: center;
+    }
+    .container{
+        max-width: 50%;
+        margin: 0 auto;
+    }
+    .card{
+        gap: 20px;
+        flex-basis: 80%;
+        display: flex;
+        justify-content: space-between;
+        border: thin solid grey;
+        border-radius: 1em;
+        padding: 20px;
+        margin: 10px 0px 10px 0px;
+    }
+    .containerChild{
+        display: flex;
+        justify-content: center;
+        gap: 1px;
+    }
+    .update-btn{
+        flex-basis: 10%;
+        height: inherit;
+        margin: 10px 5px 10px 5px;
+        border-radius: 1em;
+        border: thin solid grey;
+        background-color: rgb(51, 106, 168);
+    }
+    .delete-btn{
+        flex-basis: 10%;
+        height: inherit;
+        margin: 10px 5px 10px 5px;
+        border-radius: 1em;
+        border: thin solid grey;
+        background-color: rgb(206, 68, 68);
+    }
+    header{
+        text-align: center;
+    }
+    .add-btn{
+        background-color: white;
+        border: 0;
+        
+    }
+    .modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+
+    background-color: rgba(0,0,0,0.4); 
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto auto;
+        padding: 25px;
+        border: 1px solid #888;
+        width: 50%;
+    }
+
+    .add-btn{
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .add-task{
+        margin: 10% auto;
+        width: max-content;
+    }
+    .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    }
+</style>
+<body>
+    <header>
+        <h1>Your daily to do list</h1>
+        <button class="add-btn" onclick="openModal(`post`)"><i class="fa fa-plus" style="font-size:36px"></i></button> 
+    </header>
+    <section class="container">
+    </section>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+            <form class="add-task">
+                <label for="tName">Task name :</label>
+                <input type="text" value="" name="tName"><br><br>
+                <label for="lname">Description :</label>
+                <input type="text" value="" name="desc"><br><br>
+                <label for="tName">DueDate :</label>
+                <input type="date" value="" name="dDate"><br><br>
+                <label for="lname">Status :</label>
+                <input type="text" value="" name="status"><br><br>
+                <input type="submit" value="Submit" class="submitForm">
+            </form>
+        </div>
+      </div>
+<script src="options.js"></script>
+</body>
+</html>
