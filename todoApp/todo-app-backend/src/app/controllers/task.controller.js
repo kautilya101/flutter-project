@@ -8,7 +8,7 @@ const createTask = async (req, res) =>{
         res.send("created");
     }
     catch(err){
-        res.status(500).send( `Internal error`);
+        res.status(500).send( `Creation error - ${err}`);
     }
 }
 
@@ -17,17 +17,15 @@ const getAlltasks = async (req, res) =>{
     try{
         console.log("enterd");
         let tasks = await taskService.getAlltasks();
-        res.send(tasks);
+        res.status(200).send(tasks);
     }
     catch(err){
-        
         res.status(500).send( `Internal error`);
     }
 }
 
 const updateTasks = async(req,res) => {
     try{
-        
         const { taskName,taskDesc,dueDate,status,id } = req.body;
         let tasks = await taskService.updateTasks(taskName,taskDesc,dueDate,status,id);
         res.status(200).send(tasks);
@@ -42,11 +40,10 @@ const deleteTasks = async (req,res) => {
         const {id}  = req.query;
         console.log(id);
         await taskService.deleteTasks(id);
- 
         res.status(200).send("Deleted");
     }
     catch(err){
-        res.status(500).send(`deleting error`);
+        res.status(500).send(`Deleting error`);
     }
 }
 

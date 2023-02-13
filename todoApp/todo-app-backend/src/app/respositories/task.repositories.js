@@ -4,6 +4,7 @@ const {v4 : uuidv4} = require('uuid');
 
 const createTask = (task) =>{
     task.id = uuidv4();
+    console.log('yup');
     const taskString = fs.readFileSync(path.resolve(__dirname,'../data/tasks.json'),'utf-8');
     let allTasks = JSON.parse(taskString);
     allTasks.push(task);
@@ -12,12 +13,12 @@ const createTask = (task) =>{
 }
 
 const getAlltasks = () => {
-    return fs.readFileSync('./data/tasks.json','utf-8');
+    // console.log('yes its running');
+    return fs.readFileSync(path.resolve(__dirname,'../data/tasks.json'),'utf-8');
 }
 
 const updateTasks = (task) => {
-    fs.writeFileSync('./data/tasks.json', JSON.stringify(task));
-
+    fs.writeFileSync(path.resolve(__dirname,'../data/tasks.json'), JSON.stringify(task));
 }
 
 module.exports = {

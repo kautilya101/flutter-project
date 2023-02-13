@@ -12,17 +12,17 @@ const makeRequest = async (url) => {
 function loadAlltasks(data){
 
     let container = document.querySelector('.container');
-   
-
     for(item of data){
-
         let updatebtn = document.createElement('button');
         updatebtn.className = 'update-btn';
         updatebtn.innerHTML = '<i class="fa fa-edit" style="font-size:30px;color:white"></i>';
         updatebtn.id = JSON.stringify(item);
-        updatebtn.addEventListener('click',() => {
-            openUpdateModal(updatebtn.id)
-        })
+        // updatebtn.addEventListener('click',() => {
+        //     openUpdateModal(updatebtn.id)
+        // })
+        updatebtn.onclick = () => {
+          openUpdateModal(updatebtn.id);
+        }
         
         let deletebtn = document.createElement('button');
         deletebtn.className = 'delete-btn';
@@ -36,8 +36,6 @@ function loadAlltasks(data){
         containerChild.className = 'containerChild';
         let card = document.createElement('div');
         card.className = 'card';
-        
-
         let childLeft = document.createElement('div');
         let  childRight = document.createElement('div');
         childLeft.className = 'childLeft';
@@ -74,16 +72,18 @@ const deleteCard = async(id) => {
     console.log(id);
     let newurl = `${url}?` + `id=${id}`;
     await fetch(newurl, {method : 'DELETE'});
-    
-    // loadAlltasks(data);
 }
 
 
-const openModal = async () => {
+function openModal() {
     var modal = document.querySelector("#myModal");
     var btn = document.querySelector('.add-btn');
-    var span = document.querySelector(".close");
-    btn.onclick = function() {
+    var span = document.querySelector('.close');
+    // btn.addEventListener('click',(e) =>{
+    //   e.preventDefault();
+    //   modal.style.display = "block";
+    // })
+    btn.onclick = () => {
       modal.style.display = "block";
     }
     span.onclick = function() {
@@ -94,8 +94,7 @@ const openModal = async () => {
         modal.style.display = "none";
       }
     }
-
-    callForm("",'post')
+    callForm("",'post');
 }
 
 function callForm(id="",method,item){
@@ -114,13 +113,15 @@ function callForm(id="",method,item){
   })
 }
 
-const openUpdateModal = async (id) => {
+function openUpdateModal (id) {
     var modal = document.querySelector("#myModal");
-    var btn = document.querySelector('.update-btn');
+    var btns = document.querySelectorAll('.update-btn');
     var span = document.querySelector(".close");
-    btn.onclick = function() {
-      modal.style.display = "block";
-    }
+    btns.forEach((btn) => {
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
+    })
     span.onclick = function() {
       modal.style.display = "none";
     }
