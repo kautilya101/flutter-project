@@ -1,8 +1,9 @@
 const dataRepo = require("../respositories/main.repo")
 
 
-const getAllData = () =>{
-    return dataRepo.getAllData();
+const getAllData = async () =>{
+    const response = await dataRepo.getAllData();
+    return response;
 }
 
 module.exports = {
