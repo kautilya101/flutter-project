@@ -1,11 +1,14 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
-
+import 'package:image_downloader/image_downloader.dart';
+import 'dart:typed_data';
 void main() {
   runApp(const MyApp());
 }
@@ -39,7 +42,7 @@ class MainPageState extends State<MainPage>{
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-         title: Text('Welcome to Colorify'),
+         title: const Text('Welcome to Colorify'),
        ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,6 +50,9 @@ class MainPageState extends State<MainPage>{
           Center(
             child : Card(
                 elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
                 child : InkWell(
                   onTap: () => {
                     Navigator.push(
@@ -92,6 +98,9 @@ class MainPageState extends State<MainPage>{
           Center(
             child:Card(
                 elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
                 child : SizedBox(
                   height: 150,
                   width: 300,
@@ -122,13 +131,10 @@ class MainPageState extends State<MainPage>{
 
                   ),
                 )
-
             ),
           )
-
         ],
       ) ,
-      
     );
   }
 
@@ -147,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage>{
   File? imageFile;
   final picker = ImagePicker();
   String? message;
-
+  var imgUrl;
   uploadImage() async{
     final request = http.MultipartRequest('POST',Uri.parse("http://10.0.2.2:4000/api"));
     final headers = {
@@ -157,60 +163,59 @@ class _MyHomePageState extends State<MyHomePage>{
       http.MultipartFile('image',imageFile!.readAsBytes().asStream(),imageFile!.lengthSync(),
           filename: imageFile!.path.split('/').last)
     );
-    
     request.headers.addAll(headers);
     final response = await request.send();
     http.Response res = await http.Response.fromStream(response);
-    final resJson = jsonDecode(res.body);
-    message = resJson['message'];
-    setState(() {
-
-    });
-
-
+    final resJson = await jsonDecode(res.body);
+    message = await resJson['message'];
+    imgUrl = await resJson['url'];
+    print(message);
+    print(imgUrl);
+    // setState(() {
+    //
+    // });
   }
 
+  late http.Response response;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome to Colorify')
+        title: const Text('Welcome to Colorify')
       ),
       body: imageFile == null
-      ? Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Container(
-                width: 200,
-                height: 150,
-                child: Icon(Icons.add_a_photo),
-              ),
+      ? Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Center(
+            child: SizedBox(
+              width: 200,
+              height: 150,
+              child: Icon(Icons.add_a_photo),
             ),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton (
-                      onPressed: imageFromGallery,
-                      child: Text('GALLERY'),
-                    ),
+          ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton (
+                    onPressed: imageFromGallery,
+                    child: const Text('GALLERY'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton (
-                      onPressed: imageFromCamera,
-                      child: Text('CAMERA'),
-                    ),
-                  )
-                ]
-              )
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton (
+                    onPressed: imageFromCamera,
+                    child: const Text('CAMERA'),
+                  ),
+                )
+              ]
             )
-          ],
-        ),
+          )
+        ],
       )
           : Center(
           child: Column(
@@ -229,21 +234,25 @@ class _MyHomePageState extends State<MyHomePage>{
                   ),
               ),
               SizedBox(
-                height: 500,
+                height: 400,
                 width: 400,
                 child: Image.file(
-                    imageFile!,
-                    fit: BoxFit.cover,
-                ),
+                  imageFile!,
+                )
               ),
               ElevatedButton(
-                  onPressed: () => {
-                    uploadImage()
-                  },
+                  onPressed: () {
+                    uploadImage();
+    Future.delayed(Duration(seconds:5),(){
+                    debugPrint('send pressed');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ImagePreview(url: imgUrl)
+                    ));
+                  });},
                   child: const Text(
-                      'SEND IMAGE'
+                      'COLOR IMAGE'
                   )
-
               )
             ],
           ),
@@ -254,8 +263,8 @@ class _MyHomePageState extends State<MyHomePage>{
     PickedFile? pickedFile = await ImagePicker()
         .getImage(
         source: ImageSource.gallery,
-        maxHeight: 200,
-        maxWidth: 200
+        maxHeight: 1800,
+        maxWidth: 1800
     );
     if(pickedFile != null){
       setState(() {
@@ -264,12 +273,11 @@ class _MyHomePageState extends State<MyHomePage>{
     }
     }
 
-
   imageFromCamera() async{
     PickedFile? pickedFile = await ImagePicker()
         .getImage(source: ImageSource.camera,
-          maxHeight: 200,
-          maxWidth: 200);
+          maxHeight: 1800,
+          maxWidth: 1800);
     if (pickedFile != null) {
       setState(() {
         imageFile = File(pickedFile.path);
@@ -277,11 +285,81 @@ class _MyHomePageState extends State<MyHomePage>{
     }
   }
 
+  }
 
 
+class CircularProgressIndicatorApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const CircularProgressIndicator(
+      backgroundColor: Colors.red,
+      strokeWidth: 8,);
+  }
+}
 
 
+class ImagePreview extends StatefulWidget {
+  const ImagePreview({super.key,required this.url});
 
+  final String url;
+  @override
+  State<StatefulWidget> createState() => ImagePreviewState();
+}
+
+class ImagePreviewState extends State<ImagePreview> {
+
+
+  static final Map<String, String> httpHeaders = {
+    HttpHeaders.contentTypeHeader: "image",
+    "Connection": "Keep-Alive",
+    "Keep-Alive": "timeout=5, max=1000"
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Colorify'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Your Colorized Image",
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                  ),
+                ),
+              ),
+              SizedBox(
+                  height: 500,
+                  width: 400,
+                  child: Image.network(
+                    widget.url
+                  )
+              ),
+              ElevatedButton(
+                  onPressed: (){
+                    getImage(widget.url);
+                    },
+                  child: const Text(
+                      'DOWNLOAD'
+                  )
+              )
+            ],
+          ),
+        )
+    );
+  }
+
+  getImage(url) async{
+        await GallerySaver.saveImage(url,toDcim: true);
+  }
 }
 
 
