@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
-import 'package:image_downloader/image_downloader.dart';
+
 import 'dart:typed_data';
 void main() {
   runApp(const MyApp());
@@ -323,7 +323,7 @@ class ImagePreviewState extends State<ImagePreview> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -337,7 +337,7 @@ class ImagePreviewState extends State<ImagePreview> {
                 ),
               ),
               SizedBox(
-                  height: 500,
+                  height: 400,
                   width: 400,
                   child: Image.network(
                     widget.url
